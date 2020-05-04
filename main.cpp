@@ -126,6 +126,6 @@ struct Simulation{
 
 int main(){
     Simulation sim = Simulation();
-    cout << (sim.execute(20).fitness);
+     cout << (sim.execute(20).fitness);
     return 0;
  }
