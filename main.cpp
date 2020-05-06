@@ -1,4 +1,3 @@
-#include <map>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -6,44 +5,23 @@
 #include <string>
 #include <algorithm>
 #include <time.h>
- 
 using namespace std;
-
-const char MOVES[17] = "abcdefghijklmnop";
+const char MOVES[17] = "pdcjbihnagfmelko";
 struct Gait {
     int fitness = 0;
     int length = 20;
     string chromosome;
-
-    Gait(){
-        for (int i = 0; i < length; i = i + 1) {
-                int move = rand() % 16;
-                chromosome += MOVES[move];
-            }
-            fitness = evaluate();
-            cout << chromosome << "\n";
-    }
-
-    Gait(string chrom){
-    
+    Gait(string chrom, int score){
         chromosome = chrom;
-        fitness = evaluate();
+        fitness = score;
     }
-    int evaluate(){
-        //execute in game run
-        return rand() % 100;
-    }
-
-    Gait mate(Gait gait2){
+    string mate(Gait gait2){
         string child = "";
-        
         //two point crossover, p is the end of the first section (dna comes from gait 1)
         //from (p,p+q) we take dna from gait 2
         //from(p+q, end) we take dna from gait 1
         int p = rand() % 19;
         int q = p + rand() % (int)(20-p);
-        
-        
         //from 0 to p take dna from gait 1 with a 5% chance of mutation
         for(int ndx = 0; ndx < p; ndx+=1){
         float prob = rand() % 20;
@@ -53,8 +31,8 @@ struct Gait {
             else {
                 child +=  MOVES[rand() % 16];
             }
+            child +=",";
         }
-
         //from p to p+q take dna from gait 2 with a 5% chance of mutation
         for(int ndx = p; ndx < q; ndx+=1){
             float prob = rand() % 20;
@@ -64,9 +42,8 @@ struct Gait {
             else {
                 child +=  MOVES[rand() % 16];
             }
-    
+            child +=",";
         }
-
         //from p+q to the end take dna from gait 1 with a 5% chance of mutation
         for(int ndx = q; ndx < 20; ndx+=1){
             float prob = rand() % 20;
@@ -76,52 +53,69 @@ struct Gait {
             else {
                 child +=  MOVES[rand() % 16];
             }
-    
+            child +=",";
         }
-    return Gait(child);
+    return child;
     }
-
-  
 };
-
-  bool compareFit (Gait g1, Gait g2) {
+bool compareFit (Gait g1, Gait g2) {
     return g1.fitness < g2.fitness;
-  }
-
-
+}
 struct Simulation{
     vector<Gait> population;
-    Simulation(){
-        for (int i = 0; i < 40; i+=1){
-            population.push_back(Gait());
+      Simulation(vector<string> gen, vector<int> scores, int numChroms){
+        for (int i = 0; i < numChroms; i+=1){
+            population.push_back(Gait(gen[i], scores[i]));
         }
-    }
-    vector<Gait> cycle(){
-         sort(population.begin(), population.end(), compareFit);
-        vector<Gait> new_generation;
+      }
+    vector<string> cycle(){
+        sort(population.begin(), population.end(), compareFit);
+        vector<string> new_generation;
 
         for (int ndx = 0; ndx < 20; ndx +=1){
             Gait m1 = population[(rand() % 10)];
             Gait m2 = population[(rand() % 10)];
-            Gait child = m1.mate(m2);
+            string child = m1.mate(m2);
             new_generation.push_back(child);
         }
         return new_generation;
-
     }
-    Gait execute(int numCycles){
-        for(int c = 0; c<numCycles; c+=1){
-            population = cycle();
-        }
-        sort(population.begin(), population.end(), compareFit);
-        return population[0];
-    }
-
 };
 
-int main(){
+vector<string> run(vector<string> gen, vector<int> scores, int numChroms, bool first){
     srand (time(NULL));
-    Simulation sim = Simulation();
-    cout << (sim.execute(20).fitness);
-    return 0;
+    if(first){
+      vector<string> population;
+      for(int ndx = 0; ndx < numChroms; ndx+=1){
+        string chromosome = "";
+        for (int i = 0; i < 40; i = i + 1) {
+              int move = rand() % 16;
+              chromosome += MOVES[move];
+              chromosome +=",";
+          }
+          population.push_back(chromosome);
+        }
+        return population;
+    }
+    else{
+      Simulation sim = Simulation(gen, scores, numChroms);
+      return sim.cycle();
+    }
  }
+
+// p ---> (empty)
+// d ---> p
+// c ---> l
+// j ---> lp
+// b ---> a
+// i ---> ap
+// h ---> al
+// n ---> alp
+// a ---> q
+// g ---> qp
+// f ---> ql
+// m ---> qlp
+// e ---> qa
+// l ---> qap
+// k ---> qal
+// o ---> qalp
