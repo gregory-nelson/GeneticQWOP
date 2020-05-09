@@ -1,3 +1,4 @@
+#include <map>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -63,29 +64,29 @@ bool compareFit (Gait g1, Gait g2) {
 }
 struct Simulation{
     vector<Gait> population;
-      Simulation(vector<string> gen, vector<int> scores, int numChroms){
+      Simulation(TArray<string> gen, vector<int> scores, int numChroms){
         for (int i = 0; i < numChroms; i+=1){
             population.push_back(Gait(gen[i], scores[i]));
         }
       }
-    vector<string> cycle(){
+    TArray<string> cycle(){
         sort(population.begin(), population.end(), compareFit);
-        vector<string> new_generation;
+        TArray<string> new_generation;
 
         for (int ndx = 0; ndx < 20; ndx +=1){
             Gait m1 = population[(rand() % 10)];
             Gait m2 = population[(rand() % 10)];
             string child = m1.mate(m2);
-            new_generation.push_back(child);
+            new_generation.Add(child);
         }
         return new_generation;
     }
 };
 
-vector<string> run(vector<string> gen, vector<int> scores, int numChroms, bool first){
+TArray<string> run(TArray<string> gen, vector<int> scores, int numChroms, bool first){
     srand (time(NULL));
     if(first){
-      vector<string> population;
+      TArray<string> population;
       for(int ndx = 0; ndx < numChroms; ndx+=1){
         string chromosome = "";
         for (int i = 0; i < 40; i = i + 1) {
@@ -93,7 +94,7 @@ vector<string> run(vector<string> gen, vector<int> scores, int numChroms, bool f
               chromosome += MOVES[move];
               chromosome +=",";
           }
-          population.push_back(chromosome);
+          population.Add(chromosome);
         }
         return population;
     }
@@ -101,21 +102,4 @@ vector<string> run(vector<string> gen, vector<int> scores, int numChroms, bool f
       Simulation sim = Simulation(gen, scores, numChroms);
       return sim.cycle();
     }
- }
-
-// p ---> (empty)
-// d ---> p
-// c ---> l
-// j ---> lp
-// b ---> a
-// i ---> ap
-// h ---> al
-// n ---> alp
-// a ---> q
-// g ---> qp
-// f ---> ql
-// m ---> qlp
-// e ---> qa
-// l ---> qap
-// k ---> qal
-// o ---> qalp
+}
