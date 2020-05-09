@@ -83,7 +83,7 @@ struct Simulation{
     }
 };
 
-TArray<string> run(TArray<string> gen, TArray<int32> scores, int numChroms, bool first){
+TArray<string> run(TArray<string> gen, TArray<__int32> scores, int numChroms, bool first){
     srand (time(NULL));
     if(first){
       TArray<string> population;
