@@ -21,13 +21,13 @@ struct Gait {
         //two point crossover, p is the end of the first section (dna comes from gait 1)
         //from (p,p+q) we take dna from gait 2
         //from(p+q, end) we take dna from gait 1
-        int p = rand() % 19;
-        int q = p + rand() % (int)(20-p);
+        int p = rand() % length;
+        int q = p + (rand() % (int)(length-p));
         //from 0 to p take dna from gait 1 with a 5% chance of mutation
         for(int ndx = 0; ndx < p; ndx+=1){
         float prob = rand() % 20;
             if (prob < 19){
-                child += chromosome[ndx];
+                child += chromosome[ndx*2];
             }
             else {
                 child +=  MOVES[rand() % 16];
@@ -38,7 +38,7 @@ struct Gait {
         for(int ndx = p; ndx < q; ndx+=1){
             float prob = rand() % 20;
             if (prob < 19){
-                child += gait2.chromosome[ndx];
+                child += gait2.chromosome[ndx*2];
             }
             else {
                 child +=  MOVES[rand() % 16];
@@ -46,10 +46,10 @@ struct Gait {
             child +=",";
         }
         //from p+q to the end take dna from gait 1 with a 5% chance of mutation
-        for(int ndx = q; ndx < 20; ndx+=1){
+        for(int ndx = q; ndx < length; ndx+=1){
             float prob = rand() % 20;
             if (p < 19){
-                child += chromosome[ndx];
+                child += chromosome[ndx*2];
             }
             else {
                 child +=  MOVES[rand() % 16];
@@ -63,21 +63,36 @@ bool compareFit (Gait g1, Gait g2) {
     return g1.fitness < g2.fitness;
 }
 struct Simulation{
-    vector<Gait> population;
+    TArray<Gait> population;
       Simulation(TArray<string> gen, vector<int> scores, int numChroms){
         for (int i = 0; i < numChroms; i+=1){
-            population.push_back(Gait(gen[i], scores[i]));
+            population.Add(Gait(gen[i], scores[i]));
         }
       }
     TArray<string> cycle(){
-        sort(population.begin(), population.end(), compareFit);
-        TArray<string> new_generation;
+        TArray<string> new_generation = sort();
 
         for (int ndx = 0; ndx < 20; ndx +=1){
             Gait m1 = population[(rand() % 10)];
             Gait m2 = population[(rand() % 10)];
             string child = m1.mate(m2);
             new_generation.Add(child);
+        }
+        return new_generation;
+    }
+    TArray<string> sort(TArray<Gait> g){
+        TArray<string> new_generation;
+        while(g.Num()>0){
+          __int32 max = 0;
+          __int32 n = 0;
+          for(int ndx = 0; ndx < g.Num(); ndx+=1){
+            if(max<g[ndx]){
+              max = g[ndx];
+              n = ndx;
+            }
+          }
+          new_generation.Add(g[n]);
+          g.Remove(g[n]);
         }
         return new_generation;
     }
@@ -103,3 +118,4 @@ TArray<string> run(TArray<string> gen, TArray<__int32> scores, int numChroms, bo
       return sim.cycle();
     }
 }
+
