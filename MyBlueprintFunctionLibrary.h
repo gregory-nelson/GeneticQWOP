@@ -16,18 +16,18 @@
 using namespace std;
 
 /**
- * 
+ *
  */
 UCLASS()
-class MYPROJECT3_API UMyBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
+class AI_PROJECT_API UMyBlueprintFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
-	struct Gait {
+		struct Gait {
 		int32 fitness;
 		int32 length;
 		FString chromosome;
-		
+
 		Gait(FString chrom, int32 score, int32 len);
 
 		FString mate(Gait gait2);
@@ -37,16 +37,14 @@ class MYPROJECT3_API UMyBlueprintFunctionLibrary : public UBlueprintFunctionLibr
 		return g1.fitness < g2.fitness;
 	}
 
-    struct Simulation {
-        TArray<Gait> population;
+	struct Simulation {
+		TArray<Gait> population;
 		Simulation(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms);
 		TArray<FString> cycle(int32 numChroms);
 		TArray<FString> sort(TArray<Gait> g);
-    };
+	};
 
+	UFUNCTION(BlueprintPure, Category = "MyBlueprintFunctionLibrary")
+	static TArray<FString> run(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms, bool first);
 
-
-	UFUNCTION(BlueprintCallable, Category = "MyBlueprintFunctionLibrary")
-	TArray<FString> run(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms, bool first);
-	
 };
