@@ -19,7 +19,7 @@ TArray<FString> UMyBlueprintFunctionLibrary::run(TArray<FString> gen, TArray<int
 		TArray<FString> population;
 		for (int32 ndx = 0; ndx < numChroms; ndx += 1) {
 			FString chromosome = "";
-			for (int32 i = 0; i < 40; i = i + 1) {
+			for (int32 i = 0; i < lenChroms; i = i + 1) {
 				int32 move = rand() % 16;
 				chromosome += MOVES[move];
 				chromosome += ",";
