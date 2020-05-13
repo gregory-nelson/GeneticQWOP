@@ -111,5 +111,5 @@ FString UMyBlueprintFunctionLibrary::Gait::mate(Gait gait2) {
 UMyBlueprintFunctionLibrary::Gait::Gait(FString chrom, int32 score, int32 len) {
 	chromosome = chrom;
 	fitness = score;
-	length = len * 2;
+	length = len;
 }
