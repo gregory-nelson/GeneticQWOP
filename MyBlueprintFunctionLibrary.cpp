@@ -71,7 +71,7 @@ FString UMyBlueprintFunctionLibrary::Gait::mate(Gait gait2) {
 	//from (p,p+q) we take dna from gait 2
 	//from(p+q, end) we take dna from gait 1
 	int32 p = rand() % length;
-	int32 q = p + rand() % (int32)(length - p));
+	int32 q = p + rand() % (int32)(length - p);
 	//from 0 to p take dna from gait 1 with a 5% chance of mutation
 	for (int32 ndx = 0; ndx < p; ndx += 1) {
 		float prob = rand() % 20;
