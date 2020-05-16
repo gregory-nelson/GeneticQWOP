@@ -50,19 +50,30 @@ TArray<FString> UMyBlueprintFunctionLibrary::Simulation::cycle(int32 numChroms) 
 	return new_generation;
 }
 
-TArray<FString> UMyBlueprintFunctionLibrary::Simulation::sort(TArray<Gait> g) {
+TArray<FString> UMyBlueprintFunctionLibrary::Simulation::cycle(int32 numChroms) {
 	TArray<FString> new_generation;
-	while (g.Num() > 0) {
-		int32 max = 0;
-		int32 n = 0;
-		for (int ndx = 0; ndx < g.Num(); ndx += 1) {
-			if (max < g[ndx].fitness) {
-				max = g[ndx].fitness;
-				n = ndx;
+
+
+
+		TArray<Gait> pop;
+		while (population.Num() > 0) {
+			int32 max = 0;
+			int32 n = 0;
+			for (int ndx = 0; ndx < population.Num(); ndx += 1) {
+				if (max <population[ndx].fitness) {
+					max = population[ndx].fitness;
+					n = ndx;
+				}
 			}
+			pop.Add(population[n]);
+			population.RemoveAt(n);
 		}
-		new_generation.Add(g[n].chromosome);
-		g.RemoveAt(n);
+
+	for (int32 ndx = 0; ndx < numChroms; ndx += 1) {
+		Gait m1 = pop[(rand() % (numChroms / 2))];
+		Gait m2 = pop[(rand() % (numChroms / 2))];
+		FString child = m1.mate(m2);
+		new_generation.Add(child);
 	}
 	return new_generation;
 }
