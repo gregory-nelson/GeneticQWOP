@@ -5,14 +5,14 @@
 
 const char MOVES[17] = "QALPWERTYUSDFGZX";
 
-UMyBlueprintFunctionLibrary::Simulation::Simulation(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms, int32 numCross)
+UMyBlueprintFunctionLibrary::Simulation::Simulation(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms, int32 variation)
 {
 	for (int32 i = 0; i < numChroms; i += 1) {
-		population.Add(Gait(gen[i], scores[i], lenChroms, numCross));
+		population.Add(Gait(gen[i], scores[i], lenChroms, variation));
 	}
 }
 
-TArray<FString> UMyBlueprintFunctionLibrary::run(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms, bool first, int32 numCross)
+TArray<FString> UMyBlueprintFunctionLibrary::run(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms, bool first, int32 variation)
 {
 	srand(time(NULL));
 	if (first) {
@@ -30,7 +30,7 @@ TArray<FString> UMyBlueprintFunctionLibrary::run(TArray<FString> gen, TArray<int
 	}
 	else {
 		// Something here is causing a "string index out of bounds" error
-		Simulation sim = Simulation(gen, scores, numChroms, lenChroms, numCross);
+		Simulation sim = Simulation(gen, scores, numChroms, lenChroms, variation);
 		return sim.cycle(numChroms);
 	}
 }
@@ -53,8 +53,7 @@ TArray<FString> UMyBlueprintFunctionLibrary::Simulation::cycle(int32 numChroms) 
 TArray<FString> UMyBlueprintFunctionLibrary::Simulation::cycle(int32 numChroms) {
 	TArray<FString> new_generation;
 
-
-
+	
 		TArray<Gait> pop;
 		while (population.Num() > 0) {
 			int32 max = 0;
@@ -68,20 +67,36 @@ TArray<FString> UMyBlueprintFunctionLibrary::Simulation::cycle(int32 numChroms) 
 			pop.Add(population[n]);
 			population.RemoveAt(n);
 		}
-
-	for (int32 ndx = 0; ndx < numChroms; ndx += 1) {
-		Gait m1 = pop[(rand() % (numChroms / 2))];
-		Gait m2 = pop[(rand() % (numChroms / 2))];
-		FString child = m1.mate(m2);
-		new_generation.Add(child);
+	if (variation < 4){
+		for (int32 ndx = 0; ndx < numChroms; ndx += 1) {
+			Gait m1 = pop[(rand() % (numChroms / 2))];
+			Gait m2 = pop[(rand() % (numChroms / 2))];
+			FString child = m1.mate(m2);
+			new_generation.Add(child);
+		}
+		return new_generation;
 	}
-	return new_generation;
+	else{
+		
+		for (int32 ndx = 0; ndx < (numChroms - (numChroms/10)) ; ndx += 1) {
+			Gait m1 = pop[(rand() % (numChroms / 2))];
+			Gait m2 = pop[(rand() % (numChroms / 2))];
+			FString child = m1.mate(m2);
+			new_generation.Add(child);
+		}
+		for(int32 ndx = 0; ndx < numChroms/10; ndx += 1){
+			FString child = pop[ndx].chromosome;
+			new_generation.Add(child);	
+		}
+		return new_generation;
+			
+	}
 }
 
 FString UMyBlueprintFunctionLibrary::Gait::mate(Gait gait2) {
 	FString child = "";
 
-	if(numCross = 2){
+	if(var = 2 or var = 5){
 	//two point crossover, p is the end of the first section (dna comes from gait 1)
 	//from (p,p+q) we take dna from gait 2
 	//from(p+q, end) we take dna from gait 1
@@ -121,7 +136,7 @@ FString UMyBlueprintFunctionLibrary::Gait::mate(Gait gait2) {
 		child += ",";
 	}
 }
-else if(numCross = 1){
+else if(var = 1 or var = 4){
 	int32 p = rand() % length;
 	for (int32 ndx = 0; ndx < p; ndx += 1) {
 		float prob = rand() % 20;
@@ -163,9 +178,9 @@ else{
 	return child;
 }
 
-UMyBlueprintFunctionLibrary::Gait::Gait(FString chrom, int32 score, int32 len, int32 numC) {
+UMyBlueprintFunctionLibrary::Gait::Gait(FString chrom, int32 score, int32 len, int32 variation) {
 	chromosome = chrom;
 	fitness = score;
 	length = len;
-	numCross = numC;
+	var = variation;
 }
