@@ -42,6 +42,6 @@ class AI_PROJECT_API UMyBlueprintFunctionLibrary : public UBlueprintFunctionLibr
 	};
 
 	UFUNCTION(BlueprintPure, Category = "MyBlueprintFunctionLibrary")
-	static TArray<FString> run(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms, bool first, int32 numCross);
+	static TArray<FString> run(TArray<FString> gen, TArray<int32> scores, int32 numChroms, int32 lenChroms, bool first, int32 variation);
 
 };
